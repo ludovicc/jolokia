@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.channels.IllegalSelectorException;
 import java.util.*;
 
 import javax.management.*;
@@ -56,10 +57,7 @@ public class MBeanServerHandler implements MBeanServerHandlerMBean,MBeanRegistra
     // Optional domain for registering this handler as a mbean
     private String qualifier;
 
-    public void init() throws MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException {
-        registerMBean(this,getObjectName());
-    }
-
+    
     // Handle for remembering registered MBeans
     private static class MBeanHandle {
         private ObjectName objectName;
@@ -86,9 +84,9 @@ public class MBeanServerHandler implements MBeanServerHandlerMBean,MBeanRegistra
      *
      * @param pQualifier optional qualifier used for registering this object as an MBean (can be null)
      */
-    public MBeanServerHandler(String pQualifier) {
-        initMBeanServers();
+    public MBeanServerHandler(String pQualifier) { 
         qualifier = pQualifier;
+        initMBeanServers();
     }
 
     /**
@@ -146,8 +144,7 @@ public class MBeanServerHandler implements MBeanServerHandlerMBean,MBeanRegistra
      *
      * @return the name under which the MBean is registered.
      */
-    public ObjectName registerMBean(Object pMBean,String ... pOptionalName)
-            throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException {
+    public ObjectName registerMBean(Object pMBean,String ... pOptionalName) throws OperationsException {
         if (mBeanServers.size() > 0) {
             synchronized (mBeanHandles) {
                 Exception lastExp = null;
