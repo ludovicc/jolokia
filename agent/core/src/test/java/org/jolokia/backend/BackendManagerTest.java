@@ -18,6 +18,7 @@ package org.jolokia.backend;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.management.*;
@@ -53,8 +54,8 @@ public class BackendManagerTest implements LogHandler {
         JmxRequest req = new JmxRequestBuilder(JmxRequest.Type.READ,"java.lang:type=Memory")
                 .attribute("HeapMemoryUsage")
                 .build();
-        JSONObject ret = backendManager.handleRequest(req);
-        assertTrue(Long.parseLong( (String) ((Map) ret.get("value")).get("used")) > 0);
+        JSONObject ret = backendManager.executeRequest(req);
+        assertTrue(Long.parseLong((String) ((Map) ret.get("value")).get("used")) > 0);
     }
 
 
@@ -64,7 +65,7 @@ public class BackendManagerTest implements LogHandler {
         config.put(ConfigKey.DISPATCHER_CLASSES,RequestDispatcherTest.class.getName());
         backendManager = new BackendManager(config,this);
         JmxRequest req = new JmxRequestBuilder(JmxRequest.Type.READ,"java.lang:type=Memory").build();
-        JSONObject ret = backendManager.handleRequest(req);
+        JSONObject ret = backendManager.executeRequest(req);
         assertTrue(RequestDispatcherTest.called);
     }
 
@@ -119,11 +120,15 @@ public class BackendManagerTest implements LogHandler {
             return null;
         }
 
+        public List<JSONObject> dispatchRequests(List<JmxRequest> pJmxRequests) throws InstanceNotFoundException, AttributeNotFoundException, ReflectionException, MBeanException, IOException {
+            throw new UnsupportedOperationException("No bulk requests");
+        }
+
         public boolean canHandle(JmxRequest pJmxRequest) {
             return true;
         }
 
-        public boolean getResultInterpretation(JmxRequest pJmxRequest) {
+        public boolean supportsBulkRequests() {
             return false;
         }
     }
@@ -138,11 +143,15 @@ public class BackendManagerTest implements LogHandler {
             return null;
         }
 
+        public List<JSONObject> dispatchRequests(List<JmxRequest> pJmxRequests) throws InstanceNotFoundException, AttributeNotFoundException, ReflectionException, MBeanException, IOException {
+            throw new UnsupportedOperationException("No bulk requests");
+        }
+
         public boolean canHandle(JmxRequest pJmxRequest) {
             return false;
         }
 
-        public boolean getResultInterpretation(JmxRequest pJmxRequest) {
+        public boolean supportsBulkRequests() {
             return false;
         }
     }

@@ -104,7 +104,7 @@ public class J4pClient  {
         } catch (IOException e) {
             throw new J4pException("IO-Error while reading the response: " + e,e);
         } catch (ParseException e) {
-            // It's a parese exception. Now, check whether the HTTResponse is
+            // It's a parse exception. Now, check whether the HTTResponse is
             // an error and prepare the proper J4pException
             StatusLine statusLine = pResponse.getStatusLine();
             if (HttpStatus.SC_OK != statusLine.getStatusCode()) {
