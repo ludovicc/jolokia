@@ -10,6 +10,8 @@ import org.json.simple.parser.ParseException;
 
 import javax.management.*;
 import java.io.*;
+import java.net.Inet4Address;
+import java.nio.channels.IllegalSelectorException;
 import java.util.List;
 import java.util.Map;
 
@@ -177,7 +179,14 @@ public class HttpRequestHandler {
             if (!jsonObject.containsKey("status")) {
                 throw new IllegalStateException("No status given in response " + pJson);
             }
-            return (Integer) jsonObject.get("status");
+            Object status = jsonObject.get("status");
+            if (status instanceof Integer) {
+                return (Integer) status;
+            } else if (status instanceof Long) {
+                return ((Long) status).intValue();
+            } else {
+                throw new IllegalStateException("Cannot convert status " + status + " to an integer value");
+            }
         } else {
             throw new IllegalStateException("Internal: Not a JSONObject but a " + pJson.getClass() + " " + pJson);
         }
