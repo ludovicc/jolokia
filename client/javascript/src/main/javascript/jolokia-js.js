@@ -193,7 +193,7 @@ JolokiaJS.isFunction = function(obj)
     || ("[object Function]" === Object.prototype.toString.call(obj))
     )
     ;
-}
+};
 
 /**
     A class for holding, manipulating, and posting Jolokia requests.
